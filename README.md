@@ -2,6 +2,10 @@
 
 ------------------------------------------------------------------------
 
+##  Dashboard Preview
+
+![MainPage](screenshots/MainPage.png)
+
 ##  What This Project Solves
 
 -   Shows how many matches are High, Medium, or Low confidence

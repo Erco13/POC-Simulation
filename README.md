@@ -2,6 +2,12 @@
 
 ------------------------------------------------------------------------
 
+##  Dashboard Preview
+
+![Overview](screenshots/MainPage.png)
+
+------------------------------------------------------------------------
+
 ##  Project Overview
 
 Instead of relying on a single similarity score, the solution applies a

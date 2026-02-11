@@ -2,59 +2,132 @@
 
 ------------------------------------------------------------------------
 
-##  Dashboard Preview
+##  Project Overview
 
-![MainPage](screenshots/MainPage.png)
-
-##  What This Project Solves
-
--   Shows how many matches are High, Medium, or Low confidence
--   Highlights potential problem cases
--   Allows record-level review for deeper analysis
+Instead of relying on a single similarity score, the solution applies a
+100% weighted model across multiple validation layers to determine
+overall match confidence. The dashboard provides both a high-level
+overview and detailed drill-down analysis for business review.
 
 ------------------------------------------------------------------------
 
-##  Data Preparation
+##  Project Objectives
 
-Before building the dashboard, the dataset was cleaned and structured to
-ensure:
-
--   One row per input record
--   Developed a consistent confidence score
--   Valid match score percentages
--   Removal of malformed or inconsistent identifiers
-
-The goal was to make sure the data model was stable and reliable before
-any visualization was created.
+-   Pick the best match per input company (no double counting)
+-   Build a scoring system that makes sense
+-   Separate strong matches from questionable ones
+-   Keep the dashboard simple  for business users
 
 ------------------------------------------------------------------------
 
-##  Dashboard Structure
+##  Thought Process & Methodology
 
-Provides a simple summary of: - High Confidence % - Medium Confidence
-% - Low Confidence %
+###  One Best Match per Input
 
-This helps quickly answer: "How good is our matching overall?"
+The raw dataset included multiple potential matches per company.
 
-### Detailed Analysis
+To avoid inflating KPIs or counting the same company multiple times,
+I: - Grouped by input - Evaluated total score - Kept only the
+highest-scoring match
 
-Allows users to: - Review individual input records - Inspect matched
-company names - Analyze match score percentages - Validate confidence
-levels
-
-This makes it easier to spot edge cases or questionable matches.
+one input = one final decision.
 
 ------------------------------------------------------------------------
 
-##  Why It Matters
+###  The Scoring Framework (Clear & Scalable)
 
-Reliable matching improves: - Data quality - Reporting accuracy - Trust
-in automated processes
-
-By separating high-confidence matches from lower-confidence ones, teams
-can focus their review efforts where it matters most.
+Instead of relying on one raw score, I created a 100% weighted model
+split into three tiers.
 
 ------------------------------------------------------------------------
+
+##  Tier 1 --- Identity & Trust (50%)
+
+If identity is wrong, nothing else matters.
+  
+| Criterion | Weight | What it checks |
+|-----------|--------|----------------|
+| Website domain | 20% | Real domain (not placeholder, not facebook/linktree) |
+| Company name match | 15% | Strong similarity to input name |
+| Country match | 10% | Matches input country |
+| Year founded | 5% | Reasonable year (not 0, not future) |
+
+
+Max contribution: 50%
+
+------------------------------------------------------------------------
+
+##  Tier 2 --- Business Depth (30%)
+
+Signals that the company looks real and properly profiled.
+
+| Criterion | Weight | What it checks |
+|-----------|--------|----------------|
+| LinkedIn URL | 10% | Valid linkedin.com/company/ format |
+| Employee count | 10% | Numeric and > 0 |
+| Revenue | 5% | Numeric and > 0 |
+| Industry / sector | 5% | Not “Other”, not null |
+
+Max contribution: 30%
+
+------------------------------------------------------------------------
+
+##  Tier 3 --- Contact Quality & Freshness (20%)
+
+Helpful signals, but they shouldn't overpower identity.
+
+| Criterion | Weight | What it checks |
+|-----------|--------|----------------|
+| Business email | 5% | Contains @, not gmail/yahoo |
+| Phone number | 5% | Numeric length above threshold |
+| Address fields | 5% | City + country present |
+| Last updated | 5% | Recent relative to dataset |
+
+
+Max contribution: 20%
+
+------------------------------------------------------------------------
+
+### 3️ Confidence Classification
+
+After calculating the total weighted score (0--100%), matches are
+grouped into:
+
+-   High Confidence → Strong identity + solid supporting signals
+-   Medium Confidence → Looks acceptable but worth reviewing
+-   Low Confidence → Weak validation, likely needs manual check
+
+The structure ensures identity drives the decision, not just contact
+details.
+
+------------------------------------------------------------------------
+
+##  What the Dashboard Shows
+
+### Executive View
+
+-   Distribution of High / Medium / Low confidence matches
+-   Quick understanding of overall matching reliability
+
+### Detailed View
+
+-   Record-level inspection
+-   Score breakdown
+-   Easy identification of edge cases
+
+------------------------------------------------------------------------
+
+##  Business Impact
+
+This solution enables:
+
+-   Structured data quality monitoring
+-   Faster identification of unreliable matches
+-   Clear prioritization for manual review
+-   Increased trust in automated matching systems
+
+------------------------------------------------------------------------
+
 
 ##  Repository Structure
 
